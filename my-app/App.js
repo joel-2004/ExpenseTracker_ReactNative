@@ -1,17 +1,14 @@
 import { View, Text, StyleSheet } from "react-native";
-import Form from "./Components/Form";
 
 export default function App() {
   return (
-    <Form></Form>
+    <>
+      <View>
+        <Text>Hello World</Text>
+      </View>
+    </>
   );
 }
 
-const style = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center"
-  }
-})
+
 
