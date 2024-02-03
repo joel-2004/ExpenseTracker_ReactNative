@@ -1,24 +1,40 @@
-import { Button, Pressable, StyleSheet, Text, TextInput, TextInputComponent, View } from 'react-native'
+import { Alert, Pressable, SafeAreaView, StyleSheet, Text, TextInput, View, StatusBar, FlatList, ScrollView } from 'react-native'
 import React, { useState } from 'react'
 
 export default function Home() {
-    let temp = 0;
     const [income, setIncome] = useState(0);
     const [balance, setBalance] = useState(0);
     const [transferHistory, setTransferHistory] = useState([]);
     const [amount, setAmount] = useState(0);
     const [purpose, setPurpose] = useState("");
+    const handleReset = () => {
+        setTransferHistory([]);
+    }
     const handleIncomePress = () => {
         console.log(income)
         //setIncome(0);
-        setBalance(income);
+        setBalance(income.toString());
     }
 
     const handleAddExpense = () => {
+        let tempBalance = balance;
+        tempBalance -= amount;
+        if (tempBalance < 0) {
+            Alert.alert("Insufficient Balance", "Sorry you cannot make the next transfer",
+                [
+                    {
+                        text: "Ok"
+                    }
+                ]
+            )
+            return;
+        }
+        setBalance(tempBalance.toString());
         const newData = {
-            amount: amount,
+            amount: amount.toString(),
             purpose: purpose
         }
+
         setTransferHistory([...transferHistory, newData]);
         setAmount(0);
         setPurpose("");
@@ -26,14 +42,14 @@ export default function Home() {
     }
     return (
         <>
-            <View>
+            <SafeAreaView style={styles.topContainer}>
                 {
                     //Begining of main View
                 }
                 {
                     //TopHeader
                 }
-                <View style={styles.topContainer}>
+                <View>
                     <Text>Expense Tracker</Text>
                     <View style={styles.incomeBalanceRow}>
                         <Text style={styles.incomeBalanceText}>Income: {income}</Text>
@@ -54,6 +70,24 @@ export default function Home() {
                 }
                 <View style={styles.transferContainer}>
                     <Text>Transfer History</Text>
+                    <FlatList
+                        nestedScrollEnabled
+                        data={transferHistory}
+                        keyExtractor={(item, index) => index.toString()}
+                        renderItem={({ item }) => {
+                            //console.log(item);
+                            return (
+                                <View style={styles.incomeBalanceRow}>
+                                    <ScrollView style={styles.scrollView}>
+                                        <Text style={styles.incomeBalanceText}>{item.amount}  {item.purpose}</Text>
+                                    </ScrollView>
+                                </View>
+                            )
+                        }}
+                    />
+                    <Pressable onPress={handleReset} style={styles.resetButton}>
+                        <Text style={styles.resetButtonText}>Reset</Text>
+                    </Pressable>
                 </View>
 
                 {
@@ -76,7 +110,7 @@ export default function Home() {
                     //End of main View
                 }
 
-            </View>
+            </SafeAreaView>
         </>
     )
 }
@@ -89,12 +123,15 @@ const styles = StyleSheet.create({
         paddingBottom: 10,
         marginTop: 10,
         marginBottom: 10,
-        backgroundColor: "yellow"
+        backgroundColor: "yellow",
+        marginTop: StatusBar.currentHeight
     },
     transferContainer: {
         flex: 1,
         alignItems: "center",
-        backgroundColor: "skyblue"
+        backgroundColor: "skyblue",
+        width: 500,
+        margin: 5
     },
     incomeBalanceText: {
         padding: 5
@@ -102,14 +139,27 @@ const styles = StyleSheet.create({
     ,
     incomeBalanceRow: {
         flexDirection: "row",
+        width: 100
     },
     incomeInput: {
-        backgroundColor: "blue",
-        margin: 5
+        backgroundColor: "white",
+        margin: 5,
+        width: 70
     },
     setIncomeButton: {
         backfaceVisibility: "visible",
         paddingLeft: 4,
         backgroundColor: "green"
+    },
+    scrollView: {
+
+    },
+    resetButton: {
+        backgroundColor: "red",
+        width: 60
+    },
+    resetButtonText: {
+        textAlign: "center",
+        fontSize: 20
     }
 })
