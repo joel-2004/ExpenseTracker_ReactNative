@@ -19,8 +19,28 @@ export default function Home() {
     const handleAddExpense = () => {
         let tempBalance = balance;
         tempBalance -= amount;
+        if (amount === 0) {
+            Alert.alert("Fill the form", "Please fill in the Amount field, It cannot be 0",
+                [
+                    {
+                        text: "Ok"
+                    }
+                ]
+            )
+            return;
+        }
         if (tempBalance < 0) {
             Alert.alert("Insufficient Balance", "Sorry you cannot make the next transfer",
+                [
+                    {
+                        text: "Ok"
+                    }
+                ]
+            )
+            return;
+        }
+        if (purpose === "") {
+            Alert.alert("Fill the form", "Please fill in the purpose field",
                 [
                     {
                         text: "Ok"
@@ -56,7 +76,7 @@ export default function Home() {
                         <Text style={styles.incomeBalanceText}>Balance: {balance}</Text>
                     </View>
                     <View style={styles.incomeBalanceRow}>
-                        <TextInput style={styles.incomeInput} inputMode='numeric' value={income}
+                        <TextInput style={styles.incomeInput} inputMode='numeric' value={income.toString()}
                             onChangeText={(e) => setIncome(e)}
                         ></TextInput>
                         <Pressable style={styles.setIncomeButton} onPress={handleIncomePress}>
@@ -77,7 +97,7 @@ export default function Home() {
                         renderItem={({ item }) => {
                             //console.log(item);
                             return (
-                                <View style={styles.incomeBalanceRow}>
+                                <View style={styles.transferHistoryRow}>
                                     <ScrollView style={styles.scrollView}>
                                         <Text style={styles.incomeBalanceText}>{item.amount}  {item.purpose}</Text>
                                     </ScrollView>
@@ -96,7 +116,7 @@ export default function Home() {
                 <View>
                     <View style={styles.incomeBalanceRow}>
                         <Text >Amount</Text>
-                        <TextInput style={styles.incomeInput} value={amount} onChangeText={(e) => setAmount(e)} inputMode='numeric'></TextInput>
+                        <TextInput style={styles.incomeInput} value={amount.toString()} onChangeText={(e) => setAmount(e)} inputMode='numeric'></TextInput>
                     </View>
                     <View style={styles.incomeBalanceRow}>
                         <Text >Purpose</Text>
@@ -123,13 +143,13 @@ const styles = StyleSheet.create({
         paddingBottom: 10,
         marginTop: 10,
         marginBottom: 10,
-        backgroundColor: "yellow",
+        backgroundColor: "skyblue",
         marginTop: StatusBar.currentHeight
     },
     transferContainer: {
         flex: 1,
         alignItems: "center",
-        backgroundColor: "skyblue",
+        backgroundColor: "white",
         width: 500,
         margin: 5
     },
@@ -161,5 +181,10 @@ const styles = StyleSheet.create({
     resetButtonText: {
         textAlign: "center",
         fontSize: 20
+    },
+    transferHistoryRow: {
+        flexDirection: "row",
+        width: 100,
+
     }
 })
